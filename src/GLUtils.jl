@@ -1,4 +1,4 @@
-module JuliaGLM
+module GLUtils
 
 #export Vec2T, Vec3T, Vec4T, VecTN, VecNT
 #export MatNxMT, MatTNxM, MatNT, MatTN

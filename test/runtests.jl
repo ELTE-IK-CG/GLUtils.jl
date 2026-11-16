@@ -1,4 +1,4 @@
-using JuliaGLM
+using GLUtils
 using Test
 using StaticArrays
 
@@ -7,6 +7,8 @@ using StaticArrays
 else
     const FieldAccessError = ErrorException
 end
+
+const _LIB_MODULE::Module = GLUtils
 
 @testset "Vec types        " begin
     @test VecTN{Float32,2} == VecNT{2,Float32}
@@ -61,7 +63,7 @@ end
 
 @testset "Others           " begin
     A = mat2(1,2,3,4)
-    @test JuliaGLM.vec2(A[:,1]) == vec2(1,2)
+    @test _LIB_MODULE.vec2(A[:,1]) == vec2(1,2)
     eye,at,up = rand(Vec3),rand(Vec3),rand(Vec3)
     @test lookat(eye,at,up)*vec4(eye,1) ≈ vec4(0,0,0,1)
     @test string(A) isa String
@@ -73,106 +75,106 @@ const _FN_TEST_ATOL = 1e-6
 @testset "Trig Fns         " begin
     ≈(val,expected) = isapprox(val, expected, atol=_FN_TEST_ATOL)
 
-    @test JuliaGLM.radians(0.0f0) == 0
-    @test JuliaGLM.radians(180.0f0) ≈ pi
-    @test JuliaGLM.radians(360.0f0) ≈ 2*pi
-    @test JuliaGLM.degrees(0.0f0) == 0
-    @test JuliaGLM.degrees(pi |> Float32) ≈ 180
-    @test JuliaGLM.degrees(2 * pi |> Float32) ≈ 360
+    @test _LIB_MODULE.radians(0.0f0) == 0
+    @test _LIB_MODULE.radians(180.0f0) ≈ pi
+    @test _LIB_MODULE.radians(360.0f0) ≈ 2*pi
+    @test _LIB_MODULE.degrees(0.0f0) == 0
+    @test _LIB_MODULE.degrees(pi |> Float32) ≈ 180
+    @test _LIB_MODULE.degrees(2 * pi |> Float32) ≈ 360
 
-    @test JuliaGLM.sin(vec3(0, pi/2, 3*pi/2)) ≈ vec3(0, 1, -1)
-    @test JuliaGLM.asin(vec3(0, 1, -1)) ≈ vec3(0, pi/2, -pi/2)
-    @test JuliaGLM.cos(vec3(0, pi/2, pi)) ≈ vec3(1, 0, -1)
-    @test JuliaGLM.acos(vec3(1, 0, -1)) ≈ vec3(0, pi/2, pi)
-    @test JuliaGLM.tan(vec3(0, pi/4, pi/6)) ≈ vec3(0, 1, √3/3)
-    @test JuliaGLM.atan(vec3(0, 1, √3/3)) ≈ vec3(0, pi/4, pi/6)
-    @test JuliaGLM.atan(vec3(0, 1, √3), vec3(1, 1, 3)) ≈ vec3(0, pi/4, pi/6)
+    @test _LIB_MODULE.sin(vec3(0, pi/2, 3*pi/2)) ≈ vec3(0, 1, -1)
+    @test _LIB_MODULE.asin(vec3(0, 1, -1)) ≈ vec3(0, pi/2, -pi/2)
+    @test _LIB_MODULE.cos(vec3(0, pi/2, pi)) ≈ vec3(1, 0, -1)
+    @test _LIB_MODULE.acos(vec3(1, 0, -1)) ≈ vec3(0, pi/2, pi)
+    @test _LIB_MODULE.tan(vec3(0, pi/4, pi/6)) ≈ vec3(0, 1, √3/3)
+    @test _LIB_MODULE.atan(vec3(0, 1, √3/3)) ≈ vec3(0, pi/4, pi/6)
+    @test _LIB_MODULE.atan(vec3(0, 1, √3), vec3(1, 1, 3)) ≈ vec3(0, pi/4, pi/6)
 
-    @test JuliaGLM.sinh(vec3(0, log(2), log(3))) ≈ vec3(0, 3/4, 4/3)
-    @test JuliaGLM.asinh(vec3(0, 3/4, 4/3)) ≈ vec3(0, log(2), log(3))
-    @test JuliaGLM.cosh(vec3(0, log(2), log(3))) ≈ vec3(1, 5/4, 5/3)
-    @test JuliaGLM.acosh(vec3(1, 5/4, 5/3)) ≈ vec3(0, log(2), log(3))
-    @test JuliaGLM.tanh(vec3(0, log(2), log(3))) ≈ vec3(0, 3/5, 4/5)
-    @test JuliaGLM.atanh(vec3(0, 3/5, 4/5)) ≈ vec3(0, log(2), log(3))
+    @test _LIB_MODULE.sinh(vec3(0, log(2), log(3))) ≈ vec3(0, 3/4, 4/3)
+    @test _LIB_MODULE.asinh(vec3(0, 3/4, 4/3)) ≈ vec3(0, log(2), log(3))
+    @test _LIB_MODULE.cosh(vec3(0, log(2), log(3))) ≈ vec3(1, 5/4, 5/3)
+    @test _LIB_MODULE.acosh(vec3(1, 5/4, 5/3)) ≈ vec3(0, log(2), log(3))
+    @test _LIB_MODULE.tanh(vec3(0, log(2), log(3))) ≈ vec3(0, 3/5, 4/5)
+    @test _LIB_MODULE.atanh(vec3(0, 3/5, 4/5)) ≈ vec3(0, log(2), log(3))
 end
 
 @testset "Exponential Fns  " begin
     ≈(val,expected) = isapprox(val, expected, atol=_FN_TEST_ATOL)
 
-    @test JuliaGLM.pow(vec4(2), vec4(0,1,2,3)) == vec4(1,2,4,8)
-    @test JuliaGLM.exp(vec3(0,1,2)) ≈ vec3(1,ℯ,ℯ^2)
-    @test JuliaGLM.exp2(vec4(0,1,2,3)) ≈ vec4(1,2,4,8)
-    @test JuliaGLM.log(vec3(1,ℯ,ℯ^2)) ≈ vec3(0,1,2)
-    @test JuliaGLM.log2(vec4(1,2,4,8)) ≈ vec4(0,1,2,3)
-    @test JuliaGLM.sqrt(vec4(1,4,9,2)) ≈ vec4(1,2,3,√2)
-    @test JuliaGLM.inversesqrt(vec4(1,4,9,2)) ≈ vec4(1,0.5,1/3,1/√2)
+    @test _LIB_MODULE.pow(vec4(2), vec4(0,1,2,3)) == vec4(1,2,4,8)
+    @test _LIB_MODULE.exp(vec3(0,1,2)) ≈ vec3(1,ℯ,ℯ^2)
+    @test _LIB_MODULE.exp2(vec4(0,1,2,3)) ≈ vec4(1,2,4,8)
+    @test _LIB_MODULE.log(vec3(1,ℯ,ℯ^2)) ≈ vec3(0,1,2)
+    @test _LIB_MODULE.log2(vec4(1,2,4,8)) ≈ vec4(0,1,2,3)
+    @test _LIB_MODULE.sqrt(vec4(1,4,9,2)) ≈ vec4(1,2,3,√2)
+    @test _LIB_MODULE.inversesqrt(vec4(1,4,9,2)) ≈ vec4(1,0.5,1/3,1/√2)
 end
 
 @testset "Common Fns       " begin
     ≈(val,expected) = isapprox(val, expected, atol=_FN_TEST_ATOL)
 
-    @test JuliaGLM.abs(vec3(-3,0,2)) == vec3(3,0,2)
-    @test JuliaGLM.sign(vec3(3,0,-4)) == vec3(1,0,-1)
-    @test JuliaGLM.floor(vec4(1.1,1,1.9,-1.3)) == vec4(1,1,1,-2)
-    @test JuliaGLM.trunc(vec4(1.1,1,1.9,-1.3)) == vec4(1,1,1,-1)
-    @test JuliaGLM.roundEven(vec4(2.4,1.6,1.5,2.5)) == vec4(2)
-    @test JuliaGLM.round(vec2(2.4, 1.6)) == vec2(2)
-    @test JuliaGLM.ceil(vec4(0.2,1,-1.2,-1.8)) == vec4(1,1,-1,-1)
-    @test JuliaGLM.fract(vec3(1.2,2,3.8)) ≈ vec3(0.2,0,0.8)
-    @test JuliaGLM.mod(vec4(1,2,3,7), vec4(2,2,2,4)) == vec4(1,0,1,3)
+    @test _LIB_MODULE.abs(vec3(-3,0,2)) == vec3(3,0,2)
+    @test _LIB_MODULE.sign(vec3(3,0,-4)) == vec3(1,0,-1)
+    @test _LIB_MODULE.floor(vec4(1.1,1,1.9,-1.3)) == vec4(1,1,1,-2)
+    @test _LIB_MODULE.trunc(vec4(1.1,1,1.9,-1.3)) == vec4(1,1,1,-1)
+    @test _LIB_MODULE.roundEven(vec4(2.4,1.6,1.5,2.5)) == vec4(2)
+    @test _LIB_MODULE.round(vec2(2.4, 1.6)) == vec2(2)
+    @test _LIB_MODULE.ceil(vec4(0.2,1,-1.2,-1.8)) == vec4(1,1,-1,-1)
+    @test _LIB_MODULE.fract(vec3(1.2,2,3.8)) ≈ vec3(0.2,0,0.8)
+    @test _LIB_MODULE.mod(vec4(1,2,3,7), vec4(2,2,2,4)) == vec4(1,0,1,3)
 
     int_out = Ref(vec3(0))
-    frac_out = JuliaGLM.modf(vec3(1.2, 5, 3.9), int_out)
+    frac_out = _LIB_MODULE.modf(vec3(1.2, 5, 3.9), int_out)
     @test int_out[] == vec3(1,5,3)
     @test frac_out ≈ vec3(0.2, 0, 0.9)
 
-    @test JuliaGLM.min(vec3(1,2,3), vec3(3,2,1)) == vec3(1,2,1)
-    @test JuliaGLM.min(vec3(1,2,3), 2.0f0) == vec3(1,2,2)
-    @test JuliaGLM.max(vec3(1,2,3), vec3(3,2,1)) == vec3(3,2,3)
-    @test JuliaGLM.max(vec3(1,2,3), 2.0f0) == vec3(2,2,3)
-    @test JuliaGLM.clamp(vec4(3,1,3,4), vec4(1,2,1,5), vec4(5,3,2,5)) == vec4(3,2,2,5)
-    @test JuliaGLM.clamp(vec3(0,2,5), 1.0f0, 3.0f0) == vec3(1,2,3)
-    @test JuliaGLM.mix(vec3(0), vec3(2), vec3(0,0.5,1)) == vec3(0,1,2)
-    @test JuliaGLM.mix(vec3(0), vec3(2), 0.5f0) == vec3(1)
-    @test JuliaGLM.mix(vec3(0), vec3(2,1,3), bvec3(true, false, true)) == vec3(2,0,3)
-    @test JuliaGLM.step(vec3(1,0,2), vec3(0,1,2)) == vec3(0,1,1)
-    @test JuliaGLM.step(1.0f0, vec3(0,1,2)) == vec3(0,1,1)
-    @test JuliaGLM.smoothstep(vec3(0), vec3(1,2,2), vec3(-1,3,1)) == vec3(0,1,0.5)
-    @test JuliaGLM.smoothstep(0.0f0, 2.0f0, vec3(-1,3,1)) == vec3(0,1,0.5)
+    @test _LIB_MODULE.min(vec3(1,2,3), vec3(3,2,1)) == vec3(1,2,1)
+    @test _LIB_MODULE.min(vec3(1,2,3), 2.0f0) == vec3(1,2,2)
+    @test _LIB_MODULE.max(vec3(1,2,3), vec3(3,2,1)) == vec3(3,2,3)
+    @test _LIB_MODULE.max(vec3(1,2,3), 2.0f0) == vec3(2,2,3)
+    @test _LIB_MODULE.clamp(vec4(3,1,3,4), vec4(1,2,1,5), vec4(5,3,2,5)) == vec4(3,2,2,5)
+    @test _LIB_MODULE.clamp(vec3(0,2,5), 1.0f0, 3.0f0) == vec3(1,2,3)
+    @test _LIB_MODULE.mix(vec3(0), vec3(2), vec3(0,0.5,1)) == vec3(0,1,2)
+    @test _LIB_MODULE.mix(vec3(0), vec3(2), 0.5f0) == vec3(1)
+    @test _LIB_MODULE.mix(vec3(0), vec3(2,1,3), bvec3(true, false, true)) == vec3(2,0,3)
+    @test _LIB_MODULE.step(vec3(1,0,2), vec3(0,1,2)) == vec3(0,1,1)
+    @test _LIB_MODULE.step(1.0f0, vec3(0,1,2)) == vec3(0,1,1)
+    @test _LIB_MODULE.smoothstep(vec3(0), vec3(1,2,2), vec3(-1,3,1)) == vec3(0,1,0.5)
+    @test _LIB_MODULE.smoothstep(0.0f0, 2.0f0, vec3(-1,3,1)) == vec3(0,1,0.5)
 end
 
 @testset "Geometry Fns     " begin
     ≈(val,expected) = isapprox(val, expected, atol=_FN_TEST_ATOL)
 
-    @test JuliaGLM.length(vec2(1)) ≈ √2
-    @test JuliaGLM.length(vec3(1)) ≈ √3
-    @test JuliaGLM.normalize(vec2(1)) ≈ vec2(1/√2)
-    @test JuliaGLM.normalize(vec3(1)) ≈ vec3(1/√3)
-    @test JuliaGLM.distance(vec3(1), vec3(2)) ≈ √3
-    @test JuliaGLM.distance(vec3(4), vec3(2)) ≈ 2√3
-    @test JuliaGLM.dot(vec3(1,0,0), vec3(0,1,0)) ≈ 0
-    @test JuliaGLM.dot(vec3(0.5,2,1), vec3(4,2,3)) ≈ 9
-    @test JuliaGLM.cross(vec3(1,0,0), vec3(0,1,0)) ≈ vec3(0,0,1)
-    @test JuliaGLM.cross(vec3(1,2,3), vec3(2,4,6)) ≈ vec3(0,0,0)
-    @test JuliaGLM.faceforward(vec3(1,0,0), vec3(1,0,0), vec3(1,0,0)) == vec3(-1,0,0)
-    @test JuliaGLM.faceforward(vec3(1,0,0), vec3(0,-1,0), vec3(0,1,0)) == vec3(1,0,0)
-    @test JuliaGLM.reflect(vec3(1,-1,0), vec3(0,1,0)) ≈ vec3(1,1,0)
-    @test JuliaGLM.reflect(vec3(1,1,0), vec3(1,0,1) ./ Float32(√2)) ≈ vec3(0,1,-1)
-    @test JuliaGLM.refract(vec3(0,-1,0), vec3(0,1,0), 1.0f0) == vec3(0,-1,0)
-    @test JuliaGLM.refract(vec3(1/√2,-1/√2,0), vec3(0,1,0), 1.0f0) == vec3(1/√2,-1/√2,0)
-    @test JuliaGLM.refract(vec3(1/√2,-1/√2,0), vec3(0,1,0), 2.0f0) == vec3(0)
+    @test _LIB_MODULE.length(vec2(1)) ≈ √2
+    @test _LIB_MODULE.length(vec3(1)) ≈ √3
+    @test _LIB_MODULE.normalize(vec2(1)) ≈ vec2(1/√2)
+    @test _LIB_MODULE.normalize(vec3(1)) ≈ vec3(1/√3)
+    @test _LIB_MODULE.distance(vec3(1), vec3(2)) ≈ √3
+    @test _LIB_MODULE.distance(vec3(4), vec3(2)) ≈ 2√3
+    @test _LIB_MODULE.dot(vec3(1,0,0), vec3(0,1,0)) ≈ 0
+    @test _LIB_MODULE.dot(vec3(0.5,2,1), vec3(4,2,3)) ≈ 9
+    @test _LIB_MODULE.cross(vec3(1,0,0), vec3(0,1,0)) ≈ vec3(0,0,1)
+    @test _LIB_MODULE.cross(vec3(1,2,3), vec3(2,4,6)) ≈ vec3(0,0,0)
+    @test _LIB_MODULE.faceforward(vec3(1,0,0), vec3(1,0,0), vec3(1,0,0)) == vec3(-1,0,0)
+    @test _LIB_MODULE.faceforward(vec3(1,0,0), vec3(0,-1,0), vec3(0,1,0)) == vec3(1,0,0)
+    @test _LIB_MODULE.reflect(vec3(1,-1,0), vec3(0,1,0)) ≈ vec3(1,1,0)
+    @test _LIB_MODULE.reflect(vec3(1,1,0), vec3(1,0,1) ./ Float32(√2)) ≈ vec3(0,1,-1)
+    @test _LIB_MODULE.refract(vec3(0,-1,0), vec3(0,1,0), 1.0f0) == vec3(0,-1,0)
+    @test _LIB_MODULE.refract(vec3(1/√2,-1/√2,0), vec3(0,1,0), 1.0f0) == vec3(1/√2,-1/√2,0)
+    @test _LIB_MODULE.refract(vec3(1/√2,-1/√2,0), vec3(0,1,0), 2.0f0) == vec3(0)
 end
 
 @testset "Relational Fns   " begin
-    @test JuliaGLM.lessThan(vec3(0,1,2), vec3(2,1,1)) == bvec3(true,false,false)
-    @test JuliaGLM.lessThanEqual(vec3(0,1,2), vec3(2,1,1)) == bvec3(true,true,false)
-    @test JuliaGLM.greaterThan(vec3(0,1,2), vec3(2,1,1)) == bvec3(false,false,true)
-    @test JuliaGLM.greaterThanEqual(vec3(0,1,2), vec3(2,1,1)) == bvec3(false,true,true)
-    @test JuliaGLM.equal(vec3(1,1,2), vec3(1,3,1)) == bvec3(true,false,false)
-    @test JuliaGLM.notEqual(vec3(1,1,2), vec3(1,3,1)) == bvec3(false,true,true)
-    @test JuliaGLM.any(bvec2(true,false))
-    @test !JuliaGLM.any(bvec2(false))
-    @test JuliaGLM.all(bvec2(true))
-    @test !JuliaGLM.all(bvec2(true,false))
-    @test JuliaGLM.not(bvec2(true,false)) == bvec2(false,true)
+    @test _LIB_MODULE.lessThan(vec3(0,1,2), vec3(2,1,1)) == bvec3(true,false,false)
+    @test _LIB_MODULE.lessThanEqual(vec3(0,1,2), vec3(2,1,1)) == bvec3(true,true,false)
+    @test _LIB_MODULE.greaterThan(vec3(0,1,2), vec3(2,1,1)) == bvec3(false,false,true)
+    @test _LIB_MODULE.greaterThanEqual(vec3(0,1,2), vec3(2,1,1)) == bvec3(false,true,true)
+    @test _LIB_MODULE.equal(vec3(1,1,2), vec3(1,3,1)) == bvec3(true,false,false)
+    @test _LIB_MODULE.notEqual(vec3(1,1,2), vec3(1,3,1)) == bvec3(false,true,true)
+    @test _LIB_MODULE.any(bvec2(true,false))
+    @test !_LIB_MODULE.any(bvec2(false))
+    @test _LIB_MODULE.all(bvec2(true))
+    @test !_LIB_MODULE.all(bvec2(true,false))
+    @test _LIB_MODULE.not(bvec2(true,false)) == bvec2(false,true)
 end
