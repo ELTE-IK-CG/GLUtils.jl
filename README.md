@@ -1,2 +1,3 @@
-# JuliaGLM
-A julian version of GLM.
+# GLUtils
+
+Helper types and functions for doing GLSL-like math in Julia.
